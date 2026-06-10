@@ -99,9 +99,3 @@ homelab/
 │   └── .env.example
 └── .gitignore
 ```
-
-## Lessons learned & roadmap
-
-- Moving secrets out of compose files and into `.env` files came later than it should have — do it from day one.
-- Next up: an automated off-site backup strategy for the Immich library and Vaultwarden data.
-- In progress: a small **FastAPI monitoring service** running on the server itself, exposing the health of every container — both a useful tool and an excuse to go deeper into backend development.
