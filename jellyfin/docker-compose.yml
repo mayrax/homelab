@@ -1,0 +1,19 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+    volumes:
+      - ./config:/config
+      - ./cache:/cache
+      - ./media:/media
+    devices:
+      - /dev/dri:/dev/dri    # Intel Quick Sync hardware transcoding
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true

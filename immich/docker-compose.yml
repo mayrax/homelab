@@ -1,0 +1,55 @@
+networks:
+  proxy-network:
+    external: true
+  immich-internal:
+    internal: true
+
+services:
+  immich_server:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    container_name: immich_server
+    env_file:
+      - .env
+    volumes:
+      - ${UPLOAD_LOCATION}:/data
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "2283:2283"
+    depends_on:
+      - redis
+      - database
+      - immich_machine_learning
+    networks:
+      - proxy-network
+      - immich-internal
+    restart: always
+
+  immich_machine_learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    container_name: immich_machine_learning
+    env_file:
+      - .env
+    volumes:
+      - model-cache:/cache
+    networks:
+      - immich-internal
+    restart: always
+
+  redis:
+    image: docker.io/valkey/valkey:9
+    container_name: immich_redis
+    networks:
+      - immich-internal
+    restart: always
+
+  database:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+    container_name: immich_postgres
+    volumes:
+      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
+    networks:
+      - immich-internal
+    restart: always
+
+volumes:
+  model-cache:
